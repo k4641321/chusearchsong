@@ -65,7 +65,7 @@ class chusearchsong(toga.App):
         self.main_window.show()
 
 
-    async def 曲目详情(self,widget,song):
+    def 曲目详情(self,widget,song):
         # 先保存当前页面到栈中（在检查之前）
         self.页面暂存.append(self.main_window.content)
         print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
