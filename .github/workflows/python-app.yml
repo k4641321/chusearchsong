@@ -35,4 +35,4 @@ jobs:
     - name: 输出
       uses: actions/upload-artifact@v4
       with:
-        path: .\build\chusearchsong\android\gradle\app\build\outputs\apk\app-debug.apk
+        path: .\build\chusearchsong\android\gradle\app\build\outputs\apk\
