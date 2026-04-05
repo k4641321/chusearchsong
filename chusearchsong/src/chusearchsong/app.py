@@ -4,12 +4,12 @@ a app search chusong
 
 import toga
 from toga.style import Pack
-from toga.style.pack import COLUMN, ROW
+from toga.style.pack import COLUMN, ROW,PACK,NONE,HIDDEN, VISIBLE
 import json
 from chusearchsong.tool import 返回歌曲json
 from toga import Key
 from chusearchsong.request import 获取曲绘
-# import asyncio
+import asyncio
 
 class chusearchsong(toga.App):
 
@@ -35,8 +35,6 @@ class chusearchsong(toga.App):
             {"name": "彩绿", "id": 7},
             {"name": "音击舞萌", "id": 9}
         ], accessor="name", style=Pack(flex=1))
-# ... existing code ...
-        # ... existing code ...
         self.版本筛选 = toga.Selection(items=[
             {"name": "版本", "version": None},
             {"name": "CHUNITHM", "version": 10000},
@@ -51,13 +49,12 @@ class chusearchsong(toga.App):
             {"name": "CHUNITHM LUMINOUS", "version": 14500},
             {"name": "CHUNITHM FESTiVAL", "version": 15000}
         ], accessor="name", style=Pack(flex=1))
-# ... existing code ...
         筛选容器.add(self.分类筛选)
         筛选容器.add(self.版本筛选)
         main_box.add(筛选容器)
         # 结果部分
-        滑动条 = toga.ScrollContainer(content=self.结果容器, style=Pack(direction=COLUMN,flex=1))
-        main_box.add(滑动条)
+        self.滑动条 = toga.ScrollContainer(content=self.结果容器, style=Pack(direction=COLUMN,flex=1))
+        # main_box.add(滑动条)
         #页面暂存
         self.页面暂存 = []
         self.main_window = toga.MainWindow(title=self.formal_name)
@@ -65,9 +62,10 @@ class chusearchsong(toga.App):
         self.main_window.show()
 
 
-    def 曲目详情(self,widget,song):
+    async def 曲目详情(self,widget,song):
         # 先保存当前页面到栈中（在检查之前）
         self.页面暂存.append(self.main_window.content)
+        # self.main_window = toga.MainWindow(title="曲目详情")
         print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
         
         # 定义返回按钮的回调函数
@@ -116,19 +114,35 @@ class chusearchsong(toga.App):
             a=a+i['level']+" "
 
         难度=toga.Label(text=f"难度: {a}")
-        # 图片数据=await 获取曲绘(song['id'])
-        # 图片=toga.Image(图片数据)
-
         曲目详情容器.add(难度)
-        # 曲目详情容器.add(图片)
+        # try:
+        #     图片数据 = await 获取曲绘(song['id'])
+        #     if 图片数据:
+        #         import io
+        #         图片流 = io.BytesIO(图片数据)
+        #         图片 = toga.Image(src=图片流)
+        #         图片视图 = toga.ImageView(image=图片, style=Pack(width=200, height=200, alignment='center'))
+        #         曲目详情容器.add(图片视图)
+        #     else:
+        #         错误提示 = toga.Label(text="无法加载曲绘图片", style=Pack(padding=10))
+        #         曲目详情容器.add(错误提示)
+        # except Exception as e:
+        #     print(f"加载图片失败: {e}")
+        #     错误提示 = toga.Label(text=f"图片加载失败: {str(e)}", style=Pack(padding=10))
+        #     曲目详情容器.add(错误提示)
         # 切换窗口内容
         self.main_window.content = newbox
         print("点击详情")
 
-    async def 点击搜索(self, widget=None):
+    def 点击搜索(self, widget=None):
+        asyncio.create_task(self.执行搜索())
+    async def 执行搜索(self):
         if self.搜索框.value == "" and self.分类筛选.value.id == None and self.版本筛选.value.version == None:
             print("空")
             return
+        main_box = self.main_window.content
+        if self.滑动条 in main_box.children:
+            main_box.remove(self.滑动条)
         self.结果容器.clear()
         资源目录 = self.paths.app / "resources"
         曲目列表路径 = 资源目录/"list.json"
@@ -159,10 +173,12 @@ class chusearchsong(toga.App):
         for i in 结果:
             曲目盒子=toga.Box(id=f"box{i['id']}",style=Pack(direction=ROW))
             曲目盒子.add(toga.Label(id=i['id'],text=f"{i['id']}  -  {i['title']}    {i['genre']}  -  {i['zhversion']}", style=Pack(flex=1)))
-            # 曲目盒子.add(toga.Button(id=f"button{i['id']}",text="详情",style=Pack(flex=1,width=75),on_press=lambda widget,song=i:asyncio.create_task(self.曲目详情(widget, song))))
-            曲目盒子.add(toga.Button(id=f"button{i['id']}",text="详情",style=Pack(flex=1,width=75),on_press=lambda widget,song=i:self.曲目详情(widget, song)))
+            曲目盒子.add(toga.Button(id=f"button{i['id']}",text="详情",style=Pack(flex=1,width=75),on_press=lambda widget,song=i:asyncio.create_task(self.曲目详情(widget, song))))
+            # 曲目盒子.add(toga.Button(id=f"button{i['id']}",text="详情",style=Pack(flex=1,width=75),on_press=lambda widget,song=i:self.曲目详情(widget, song)))
             self.结果容器.add(曲目盒子)
             self.结果容器.add(toga.Divider())
+        main_box.add(self.滑动条)
+        # main_box.add(self.结果容器)
         # self.结果框.value=结果
 
 
