@@ -127,14 +127,18 @@ class chusearchsong(toga.App):
         # print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
         
         # 定义返回按钮的回调函数
-
+        
+        def 返回按钮回调(widget=None):
+            if self.页面暂存:
+                previous_content = self.页面暂存.pop()
+                self.main_window.content = previous_content
                 # print(f"返回成功，剩余页面数: {len(self.页面暂存)}")
             # else:
                 # print("已回到主页面")
         
         # 创建新的详情页面
         from chusearchsong.songinfo import 曲目详情
-        newbox = await 曲目详情(self,self.页面暂存,song)
+        newbox = await 曲目详情(返回按钮回调,song)
 
         self.main_window.content = newbox
         # print("点击详情")

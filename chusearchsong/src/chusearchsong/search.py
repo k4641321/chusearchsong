@@ -50,7 +50,7 @@ async def 曲目搜索(曲目列表路径:str,分类筛选:str,版本筛选:str,
                     if i["version"] == j["version"]:
                         单首曲目 = 返回歌曲json(i["id"],i["title"],i["artist"],i["genre"],i["bpm"],i["version"],j["title"],i["difficulties"])
                 结果.append(单首曲目)
-    print(结果)
+    #print(结果)
     结果2=[]
     for i in 结果:
         isappend=False
@@ -65,7 +65,7 @@ async def 曲目搜索(曲目列表路径:str,分类筛选:str,版本筛选:str,
                 结果2.append(i)
         if isappend:
             i["isappend"]=True
-    print(结果2)
+    #print(结果2)
     曲目盒子 = toga.Box(style=Pack(direction=COLUMN))
     if not 结果2==[]:
         结果=结果2
