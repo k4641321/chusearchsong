@@ -57,7 +57,8 @@ class chusearchsong(toga.App):
             {"name": "4","level_value":4},
             {"name": "5","level_value":5},
             {"name": "6","level_value":6},
-            {"name": "7+","level_value":7},
+            {"name": "7","level_value":7},
+            {"name": "7+","level_value":7.5},
             {"name": "8","level_value":8},
             {"name": "8+","level_value":8.5},
             {"name": "9","level_value":9},
@@ -73,7 +74,7 @@ class chusearchsong(toga.App):
             {"name": "14","level_value":14},
             {"name": "14+","level_value":14.5},
             {"name": "15","level_value":15},
-            {"name": "15+","level_value":15.9},
+            {"name": "15+","level_value":15.5},
 
         ], accessor="name", style=Pack(flex=1))
         self.难度筛选后=toga.Selection(items=[
@@ -84,21 +85,22 @@ class chusearchsong(toga.App):
             {"name": "4","level_value":4},
             {"name": "5","level_value":5},
             {"name": "6","level_value":6},
-            {"name": "7+","level_value":7},
+            {"name": "7","level_value":7},
+            {"name": "7+","level_value":7.9},
             {"name": "8","level_value":8},
-            {"name": "8+","level_value":8.5},
+            {"name": "8+","level_value":8.9},
             {"name": "9","level_value":9},
-            {"name": "9+","level_value":9.5},
+            {"name": "9+","level_value":9.9},
             {"name": "10","level_value":10},
-            {"name": "10+","level_value":10.5},
+            {"name": "10+","level_value":10.9},
             {"name": "11","level_value":11},
-            {"name": "11+","level_value":11.5},
+            {"name": "11+","level_value":11.9},
             {"name": "12","level_value":12},
-            {"name": "12+","level_value":12.5},
+            {"name": "12+","level_value":12.9},
             {"name": "13","level_value":13},
-            {"name": "13+","level_value":13.5},
+            {"name": "13+","level_value":13.9},
             {"name": "14","level_value":14},
-            {"name": "14+","level_value":14.5},
+            {"name": "14+","level_value":14.9},
             {"name": "15","level_value":15},
             {"name": "15+","level_value":15.9},
 
@@ -125,68 +127,15 @@ class chusearchsong(toga.App):
         # print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
         
         # 定义返回按钮的回调函数
-        def 返回按钮回调(widget=None):
-            if self.页面暂存:
-                previous_content = self.页面暂存.pop()
-                self.main_window.content = previous_content
+
                 # print(f"返回成功，剩余页面数: {len(self.页面暂存)}")
             # else:
                 # print("已回到主页面")
         
         # 创建新的详情页面
-        newbox = toga.Box(style=Pack(direction=COLUMN, flex=1))
-        
-        # 标题栏容器
-        标题栏容器 = toga.Box(style=Pack(direction=ROW))
-        返回按钮 = toga.Button(
-            text="返回",
-            style=Pack(flex=1, width=75),
-            on_press=返回按钮回调
-        )
-        标题栏容器.add(返回按钮)
-        newbox.add(标题栏容器)
-        
-        # 曲目详情容器
-        曲目详情容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
-        newbox.add(曲目详情容器)
-        
-        # 上半部分
-        上半部分 = toga.Box(style=Pack(direction=ROW))
-        曲目id=toga.Label(text=f"id: {song['id']}",style=Pack(flex=1))
-        上半部分.add(曲目id)
-        分类=toga.Label(text=f"分类: {song['genre']}",style=Pack(flex=1))
-        上半部分.add(分类)
-        曲目详情容器.add(上半部分)
-        
-        #下半部分
-        下半部分 = toga.Box(style=Pack(direction=ROW))
-        曲师=toga.Label(text=f"曲师: {song['artist']}",style=Pack(flex=1))
-        下半部分.add(曲师)
-        版本=toga.Label(text=f"版本: {song['zhversion']}",style=Pack(flex=1))
-        下半部分.add(版本)
-        曲目详情容器.add(下半部分)
-        a=""
-        for i in song["difficulties"]:
-            a=a+i['level']+" "
+        from chusearchsong.songinfo import 曲目详情
+        newbox = await 曲目详情(self,self.页面暂存,song)
 
-        难度=toga.Label(text=f"难度: {a}")
-        曲目详情容器.add(难度)
-        # try:
-        #     图片数据 = await 获取曲绘(song['id'])
-        #     if 图片数据:
-        #         import io
-        #         图片流 = io.BytesIO(图片数据)
-        #         图片 = toga.Image(src=图片流)
-        #         图片视图 = toga.ImageView(image=图片, style=Pack(width=200, height=200, alignment='center'))
-        #         曲目详情容器.add(图片视图)
-        #     else:
-        #         错误提示 = toga.Label(text="无法加载曲绘图片", style=Pack(padding=10))
-        #         曲目详情容器.add(错误提示)
-        # except Exception as e:
-        #     print(f"加载图片失败: {e}")
-        #     错误提示 = toga.Label(text=f"图片加载失败: {str(e)}", style=Pack(padding=10))
-        #     曲目详情容器.add(错误提示)
-        # 切换窗口内容
         self.main_window.content = newbox
         # print("点击详情")
 
