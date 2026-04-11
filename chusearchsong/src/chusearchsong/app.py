@@ -6,7 +6,7 @@ import toga
 from toga.style import Pack
 from toga.style.pack import COLUMN, ROW,PACK,NONE,HIDDEN, VISIBLE
 import json
-from chusearchsong.tool import 返回歌曲json
+#from chusearchsong.tool import 返回歌曲json
 from toga import Key
 from chusearchsong.request import 获取曲绘
 import asyncio
@@ -49,8 +49,64 @@ class chusearchsong(toga.App):
             {"name": "CHUNITHM LUMINOUS", "version": 14500},
             {"name": "CHUNITHM FESTiVAL", "version": 15000}
         ], accessor="name", style=Pack(flex=1))
+        self.难度筛选前=toga.Selection(items=[
+            {"name": "难度下限","level_value":0},
+            {"name": "1","level_value":1},
+            {"name": "2","level_value":2},
+            {"name": "3","level_value":3},
+            {"name": "4","level_value":4},
+            {"name": "5","level_value":5},
+            {"name": "6","level_value":6},
+            {"name": "7+","level_value":7},
+            {"name": "8","level_value":8},
+            {"name": "8+","level_value":8.5},
+            {"name": "9","level_value":9},
+            {"name": "9+","level_value":9.5},
+            {"name": "10","level_value":10},
+            {"name": "10+","level_value":10.5},
+            {"name": "11","level_value":11},
+            {"name": "11+","level_value":11.5},
+            {"name": "12","level_value":12},
+            {"name": "12+","level_value":12.5},
+            {"name": "13","level_value":13},
+            {"name": "13+","level_value":13.5},
+            {"name": "14","level_value":14},
+            {"name": "14+","level_value":14.5},
+            {"name": "15","level_value":15},
+            {"name": "15+","level_value":15.9},
+
+        ], accessor="name", style=Pack(flex=1))
+        self.难度筛选后=toga.Selection(items=[
+            {"name": "难度上限","level_value":0},
+            {"name": "1","level_value":1},
+            {"name": "2","level_value":2},
+            {"name": "3","level_value":3},
+            {"name": "4","level_value":4},
+            {"name": "5","level_value":5},
+            {"name": "6","level_value":6},
+            {"name": "7+","level_value":7},
+            {"name": "8","level_value":8},
+            {"name": "8+","level_value":8.5},
+            {"name": "9","level_value":9},
+            {"name": "9+","level_value":9.5},
+            {"name": "10","level_value":10},
+            {"name": "10+","level_value":10.5},
+            {"name": "11","level_value":11},
+            {"name": "11+","level_value":11.5},
+            {"name": "12","level_value":12},
+            {"name": "12+","level_value":12.5},
+            {"name": "13","level_value":13},
+            {"name": "13+","level_value":13.5},
+            {"name": "14","level_value":14},
+            {"name": "14+","level_value":14.5},
+            {"name": "15","level_value":15},
+            {"name": "15+","level_value":15.9},
+
+        ], accessor="name", style=Pack(flex=1))
         筛选容器.add(self.分类筛选)
         筛选容器.add(self.版本筛选)
+        筛选容器.add(self.难度筛选前)
+        筛选容器.add(self.难度筛选后)
         main_box.add(筛选容器)
         # 结果部分
         self.滑动条 = toga.ScrollContainer(content=self.结果容器, style=Pack(direction=COLUMN,flex=1))
@@ -66,16 +122,16 @@ class chusearchsong(toga.App):
         # 先保存当前页面到栈中（在检查之前）
         self.页面暂存.append(self.main_window.content)
         # self.main_window = toga.MainWindow(title="曲目详情")
-        print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
+        # print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
         
         # 定义返回按钮的回调函数
         def 返回按钮回调(widget=None):
             if self.页面暂存:
                 previous_content = self.页面暂存.pop()
                 self.main_window.content = previous_content
-                print(f"返回成功，剩余页面数: {len(self.页面暂存)}")
-            else:
-                print("已回到主页面")
+                # print(f"返回成功，剩余页面数: {len(self.页面暂存)}")
+            # else:
+                # print("已回到主页面")
         
         # 创建新的详情页面
         newbox = toga.Box(style=Pack(direction=COLUMN, flex=1))
@@ -132,55 +188,26 @@ class chusearchsong(toga.App):
         #     曲目详情容器.add(错误提示)
         # 切换窗口内容
         self.main_window.content = newbox
-        print("点击详情")
+        # print("点击详情")
 
     def 点击搜索(self, widget=None):
         asyncio.create_task(self.执行搜索())
     async def 执行搜索(self):
         if self.搜索框.value == "" and self.分类筛选.value.id == None and self.版本筛选.value.version == None:
-            print("空")
+            # print("空")
             return
         main_box = self.main_window.content
         if self.滑动条 in main_box.children:
             main_box.remove(self.滑动条)
         self.结果容器.clear()
-        资源目录 = self.paths.app / "resources"
-        曲目列表路径 = 资源目录/"list.json"
-        with open(曲目列表路径, "r", encoding="UTF-8") as f:
-            曲目列表 = json.load(f)
-            f.close()
-        结果 = []
-        print(self.版本筛选.value.version)
-        for i in 曲目列表["songs"]:
-            if self.搜索框.value.lower() in i["title"].lower():
-                if self.分类筛选.value.id == None and i["version"] == self.版本筛选.value.version:
-                    单首曲目 =await 返回歌曲json(i["id"],i["title"],i["artist"],i["genre"],i["bpm"],i["version"],self.版本筛选.value.name,i["difficulties"])
-                    结果.append(单首曲目)
-                elif self.分类筛选.value.name == i["genre"] and self.版本筛选.value.version == None:
-                    for j in 曲目列表["versions"]:
-                        if i["version"] == j["version"]:
-                            单首曲目 =await 返回歌曲json(i["id"],i["title"],i["artist"],i["genre"],i["bpm"],i["version"],j["title"],i["difficulties"])
-                    结果.append(单首曲目)
-                elif self.分类筛选.value.name == i["genre"] and i["version"] == self.版本筛选.value.version:
-                    单首曲目 =await 返回歌曲json(i["id"],i["title"],i["artist"],i["genre"],i["bpm"],i["version"],self.版本筛选.value.name,i["difficulties"])
-                    结果.append(单首曲目)
-                elif self.版本筛选.value.version == None and self.分类筛选.value.id == None:
-                    for j in 曲目列表["versions"]:
-                        if i["version"] == j["version"]:
-                           单首曲目 = await 返回歌曲json(i["id"],i["title"],i["artist"],i["genre"],i["bpm"],i["version"],j["title"],i["difficulties"])
-                    结果.append(单首曲目)
-        print(type(结果))
-        for i in 结果:
-            曲目盒子=toga.Box(id=f"box{i['id']}",style=Pack(direction=ROW))
-            曲目盒子.add(toga.Label(id=i['id'],text=f"{i['id']}  -  {i['title']}    {i['genre']}  -  {i['zhversion']}", style=Pack(flex=1)))
-            曲目盒子.add(toga.Button(id=f"button{i['id']}",text="详情",style=Pack(flex=1,width=75),on_press=lambda widget,song=i:asyncio.create_task(self.曲目详情(widget, song))))
-            # 曲目盒子.add(toga.Button(id=f"button{i['id']}",text="详情",style=Pack(flex=1,width=75),on_press=lambda widget,song=i:self.曲目详情(widget, song)))
-            self.结果容器.add(曲目盒子)
-            self.结果容器.add(toga.Divider())
+        from chusearchsong.search import 曲目搜索
+        曲目数据路径= self.paths.app / 'resources' / 'list.json'
+        曲目盒子=await 曲目搜索(曲目数据路径,self.分类筛选.value.name,self.版本筛选.value.version,self.版本筛选.value.name,self.难度筛选前.value.level_value,self.难度筛选后.value.level_value,self.搜索框.value,self.曲目详情)
         main_box.add(self.滑动条)
         # main_box.add(self.结果容器)
         # self.结果框.value=结果
-
+        self.结果容器.add(曲目盒子)
+        self.结果容器.add(toga.Divider())
 
 def main():
     return chusearchsong()
