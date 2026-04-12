@@ -23,7 +23,7 @@ test_sources = [
 
 requires = [
     "aiohttp",
-    "logger"
+    "loguru"
 ]
 test_requires = [
     "pytest",
