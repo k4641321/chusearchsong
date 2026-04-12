@@ -1,4 +1,4 @@
-name: Python application
+name: macos-build
 
 on:
   push:
@@ -35,4 +35,4 @@ jobs:
     - name: 输出
       uses: actions/upload-artifact@v4
       with:
-        path: .\chusearchsong\build\helloworld\ios\xcode
+        path: ./chusearchsong/build/chusearchsong/ios/xcode/build/Debug-iphonesimulator/chusearchsong.app
