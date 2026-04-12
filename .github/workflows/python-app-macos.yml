@@ -27,9 +27,6 @@ jobs:
     - name: 构建
       run: |
         cd chusearchsong
-        #briefcase create android
-        #briefcase build android
-        #xcode-select --install
         briefcase create ios
         briefcase build ios
     - name: 输出

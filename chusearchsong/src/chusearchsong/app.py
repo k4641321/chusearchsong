@@ -138,7 +138,7 @@ class chusearchsong(toga.App):
         
         # 创建新的详情页面
         from chusearchsong.songinfo import 曲目详情
-        newbox = await 曲目详情(返回按钮回调,song)
+        newbox = await 曲目详情(返回按钮回调,song,self.paths.cache)
 
         self.main_window.content = newbox
         # print("点击详情")

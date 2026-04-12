@@ -32,8 +32,6 @@ jobs:
         cd chusearchsong
         briefcase create android
         briefcase build android
-        #briefcase create ios
-        #briefcase build ios
     - name: 输出
       uses: actions/upload-artifact@v4
       with:
