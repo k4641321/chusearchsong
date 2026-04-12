@@ -14610,3 +14610,12 @@ logs/briefcase.2026_04_03-22_31_34.new.log
 .venv/Lib/site-packages/yarl-1.15.2.dist-info/RECORD
 .venv/Lib/site-packages/yarl-1.15.2.dist-info/top_level.txt
 .venv/Lib/site-packages/yarl-1.15.2.dist-info/WHEEL
+.venv/Lib/site-packages/logger-1.4.dist-info/WHEEL
+.venv/Lib/site-packages/logger/__init__.py
+.gitignore
+.venv/Lib/site-packages/logger/__pycache__/__init__.cpython-38.pyc
+.venv/Lib/site-packages/logger-1.4.dist-info/INSTALLER
+.venv/Lib/site-packages/logger-1.4.dist-info/METADATA
+.venv/Lib/site-packages/logger-1.4.dist-info/RECORD
+.venv/Lib/site-packages/logger-1.4.dist-info/REQUESTED
+.venv/Lib/site-packages/logger-1.4.dist-info/top_level.txt

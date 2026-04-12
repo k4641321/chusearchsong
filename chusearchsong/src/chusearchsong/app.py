@@ -1,5 +1,5 @@
 """
-a app search chusong
+答辩框架与史山代码写的中二查歌
 """
 
 import toga
@@ -10,11 +10,15 @@ import json
 from toga import Key
 from chusearchsong.request import 获取曲绘
 import asyncio
+from logger import logger
 
 class chusearchsong(toga.App):
 
     def startup(self):
         main_box = toga.Box(style=Pack(direction=COLUMN,flex=1))
+
+        #命令绑定
+
         # 搜索部分
         搜索容器 = toga.Box(style=Pack(direction=ROW))
         self.搜索框 = toga.TextInput(placeholder="搜索...", style=Pack(flex=1))
@@ -122,7 +126,9 @@ class chusearchsong(toga.App):
 
     async def 曲目详情(self,widget,song):
         # 先保存当前页面到栈中（在检查之前）
+        logger.info(self.commands.items)
         self.页面暂存.append(self.main_window.content)
+
         # self.main_window = toga.MainWindow(title="曲目详情")
         # print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
         
@@ -135,7 +141,9 @@ class chusearchsong(toga.App):
                 # print(f"返回成功，剩余页面数: {len(self.页面暂存)}")
             # else:
                 # print("已回到主页面")
-        
+
+        # 返回命令=toga.Command(返回按钮回调,text='返回',shortcut=Key.F)
+        # self.commands.add(返回命令)
         # 创建新的详情页面
         from chusearchsong.songinfo import 曲目详情
         newbox = await 曲目详情(返回按钮回调,song,self.paths.cache)

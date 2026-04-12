@@ -18,27 +18,24 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
     标题栏容器.add(返回按钮)
     newbox.add(标题栏容器)
     
+    曲绘容器=toga.Box(style=Pack(direction=ROW,flex=1))
+    newbox.add(曲绘容器)
     # 曲目详情容器
     曲目详情容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
     newbox.add(曲目详情容器)
     
     #图片
     async def 加载曲绘():
-        图片容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
+        #图片容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
         try:
-            图片数据 = await 获取曲绘(song['id'],缓存路径)
-            if 图片数据:
-                import io
-                图片流 = io.BytesIO(图片数据)
-                图片 = toga.Image(src=图片流)
-                图片视图 = toga.ImageView(image=图片, style=Pack(width=200, height=200, alignment='center'))
-                
-                # 清除占位符并添加图片
-                图片容器.add(图片视图)
+            图片路径 = await 获取曲绘(song['id'],缓存路径)
+            图片= toga.Image(图片路径)
+            图片容器=toga.ImageView(图片)
+            曲绘容器.add(图片容器)
         except Exception as e:
             print(f"加载图片失败: {e}")
-            图片容器.add(toga.Label(text="加载图片失败"))
-            曲目详情容器.add(图片容器)
+            曲绘容器.add(toga.Label(text="加载图片失败"))
+            #曲目详情容器.add(图片容器)
 
     # 上半部分
     # 上半部分 = toga.Box(style=Pack(direction=ROW))
@@ -61,7 +58,7 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
     # 曲目详情容器.add(下半部分)
     a=""
     for i in song["difficulties"]:
-        a=a+i['level']+" \ "
+        a=a+i['level']+r" \ "
 
     难度=toga.Label(text=f"难度: {a}")
     曲目详情容器.add(难度)
@@ -88,7 +85,7 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
             错误提示 = toga.Label(text=f"获取歌曲详细信息失败: {str(e)}", style=Pack(padding=10))
             曲目详情容器.add(错误提示)
 
-    # asyncio.create_task(加载曲绘())
+    asyncio.create_task(加载曲绘())
     asyncio.create_task(加载曲目详细信息())
     
     # 切换窗口内容

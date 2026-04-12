@@ -70,8 +70,8 @@ async def 曲目搜索(曲目列表路径:str,分类筛选:str,版本筛选:str,
     if not 结果2==[]:
         结果=结果2
     for i in 结果:
-        单曲盒子=toga.Box(id=f"box{i['id']}",style=Pack(direction=ROW))
-        单曲盒子.add(toga.Label(id=i['id'],text=f"{i['id']}  -  {i['title']}    {i['genre']}  -  {i['zhversion']}", style=Pack(flex=1)))
+        单曲盒子=toga.Box(id=f"box{i['id']}",style=Pack(direction=ROW,flex=1))
         单曲盒子.add(toga.Button(id=f"button{i['id']}",text="详情",style=Pack(flex=1,width=75),on_press=lambda widget,song=i:asyncio.create_task(曲目详情(widget, song))))
+        单曲盒子.add(toga.Label(id=i['id'],text=f"{i['id']}  -  {i['title']}    {i['genre']}  -  {i['zhversion']}", style=Pack(flex=1)))
         曲目盒子.add(单曲盒子)
     return 曲目盒子
