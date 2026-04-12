@@ -1,6 +1,6 @@
 import aiohttp
 import os
-from logger import logger
+from loguru import logger
 # import asyncio
 async def 获取曲绘(id, 缓存路径):
     """获取曲目封面图片"""

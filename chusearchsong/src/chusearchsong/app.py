@@ -10,7 +10,7 @@ import json
 from toga import Key
 from chusearchsong.request import 获取曲绘
 import asyncio
-from logger import logger
+from loguru import logger
 
 class chusearchsong(toga.App):
 
