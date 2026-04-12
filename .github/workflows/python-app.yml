@@ -32,9 +32,9 @@ jobs:
         cd chusearchsong
         briefcase create android
         briefcase build android
-        briefcase create ios
-        briefcase build ios
+        #briefcase create ios
+        #briefcase build ios
     - name: 输出
       uses: actions/upload-artifact@v4
       with:
-        path: .\chusearchsong\build\chusearchsong\android\gradle\app\build\outputs\apk\;.\chusearchsong\build\helloworld\ios\xcode
+        path: .\chusearchsong\build\chusearchsong\android\gradle\app\build\outputs\apk\ #;.\chusearchsong\build\helloworld\ios\xcode
