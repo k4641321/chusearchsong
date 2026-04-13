@@ -34,7 +34,7 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
             曲绘容器.add(图片容器)
         except Exception as e:
             print(f"加载图片失败: {e}")
-            曲绘容器.add(toga.Label(text="加载图片失败"))
+            曲绘容器.add(toga.Label(text=f"加载图片失败：{e}"))
             #曲目详情容器.add(图片容器)
 
     # 上半部分
