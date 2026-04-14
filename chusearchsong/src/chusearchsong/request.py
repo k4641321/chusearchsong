@@ -8,7 +8,7 @@ async def 获取曲绘(id, 缓存路径):
     logger.info(f"正在获取曲绘图片: {url}")
     
     # 确保缓存目录存在
-    图片缓存目录 = 缓存路径 / "cache" / "pic"
+    图片缓存目录 = 缓存路径 / "cache"
     os.makedirs(图片缓存目录, exist_ok=True)
     
     图片文件路径 = os.path.join(图片缓存目录, f"{id}.png")
