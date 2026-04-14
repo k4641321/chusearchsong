@@ -93,18 +93,18 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
             错误提示 = toga.Label(text=f"获取歌曲详细信息失败: {str(e)}", style=Pack(padding=10))
             曲目详情容器.add(错误提示)
 
-    async def 加载歌曲预览():
-        try:
-            歌曲预览 = toga.WebView()
-            歌曲路径=await 获取歌曲预览(song["id"],缓存路径)
-            await 歌曲预览.load_url(f"{歌曲路径}")
-        except Exception as e:
-            logger.error(f"获取歌曲预览失败: {e}")
-            错误提示 = toga.Label(text=f"获取歌曲预览失败: {str(e)}")
-            歌曲预览容器.add(错误提示)
+    # async def 加载歌曲预览():
+    #     try:
+    #         歌曲预览 = toga.WebView()
+    #         歌曲路径=await 获取歌曲预览(song["id"],缓存路径)
+    #         await 歌曲预览.load_url(f"{歌曲路径}")
+    #     except Exception as e:
+    #         logger.error(f"获取歌曲预览失败: {e}")
+    #         错误提示 = toga.Label(text=f"获取歌曲预览失败: {str(e)}")
+    #         歌曲预览容器.add(错误提示)
     asyncio.create_task(加载曲绘())
     asyncio.create_task(加载曲目详细信息())
     # asyncio.create_task(加载歌曲预览())
     
     # 切换窗口内容
-    return newbox
+    return rootbox
