@@ -146,8 +146,8 @@ class chusearchsong(toga.App):
         # self.commands.add(返回命令)
         # 创建新的详情页面
         from chusearchsong.songinfo import 曲目详情
-        newbox = await 曲目详情(返回按钮回调,song,self.paths.cache)
-        tipdialog=toga.InfoDialog("提示", f"{self.paths.cache}")
+        newbox = await 曲目详情(返回按钮回调,song,self.paths.data)
+        tipdialog=toga.InfoDialog("提示", f"{self.paths.data}")
         await self.main_window.dialog(tipdialog)
         self.main_window.content = newbox
         # print("点击详情")
