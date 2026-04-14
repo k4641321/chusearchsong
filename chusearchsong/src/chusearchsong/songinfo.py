@@ -24,8 +24,8 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
     曲绘容器=toga.Box(style=Pack(direction=ROW,flex=1))
     newbox.add(曲绘容器)
 
-    歌曲预览容器=toga.Box(style=Pack(direction=COLUMN,flex=1))
-    newbox.add(歌曲预览容器)
+    # 歌曲预览容器=toga.Box(style=Pack(direction=COLUMN,flex=1))
+    # newbox.add(歌曲预览容器)
 
     # 曲目详情容器
     曲目详情容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
