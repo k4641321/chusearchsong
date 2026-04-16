@@ -5,9 +5,9 @@ import json
 from chusearchsong.request import 获取歌曲详细信息,获取曲绘,获取歌曲预览
 import asyncio
 from loguru import logger
-async def 曲目详情(返回按钮回调,song,缓存路径):
+async def 曲目详情(返回按钮回调,song,缓存路径,self):
     rootbox = toga.Box(style=Pack(direction=COLUMN,flex=1))
-    
+
     newbox = toga.Box(style=Pack(direction=COLUMN, flex=1))
     滚动条=toga.ScrollContainer(content=newbox,style=Pack(direction=COLUMN,flex=1))
     rootbox.add(滚动条)
@@ -31,12 +31,23 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
     曲目详情容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
     newbox.add(曲目详情容器)
     
-    #图片
+    async def 切换收藏状态(song, self, 收藏按钮):
+        from chusearchsong.tool import 收藏, 取消歌曲收藏
+        
+        if 收藏按钮.text == "添加收藏":
+            await 收藏(song, self)
+            收藏按钮.text = "取消收藏"
+            收藏按钮.on_press = lambda widget: asyncio.create_task(切换收藏状态(song, self, 收藏按钮))
+        else:
+            await 取消歌曲收藏(song, self)
+            收藏按钮.text = "添加收藏"
+            收藏按钮.on_press = lambda widget: asyncio.create_task(切换收藏状态(song, self, 收藏按钮))
+    
     async def 加载曲绘():
         #图片容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
         try:
             图片路径 = await 获取曲绘(song['id'],缓存路径)
-            图片= toga.Image(图片路径)
+            图片= toga.Image(data=图片路径)
             图片容器=toga.ImageView(图片)
             曲绘容器.add(图片容器)
         except Exception as e:
@@ -71,8 +82,39 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
     曲目详情容器.add(难度)
     分割线2=toga.Divider()
     曲目详情容器.add(分割线2)
+    曲目信息表格容器=toga.Box(style=Pack(direction=COLUMN, flex=1))
+    曲目详情容器.add(曲目信息表格容器)
+
+    with open(self.配置文件路径,"r",encoding="utf-8") as f:
+        收藏目录路径=json.load(f)["favorites_path"]
     
+    已收藏 = False
+    if 收藏目录路径:
+        try:
+            with open(收藏目录路径,"r",encoding="utf-8") as f:
+                收藏目录=json.load(f)["songs"]
+                for i in 收藏目录:
+                    if i["id"]==song["id"]:
+                        已收藏 = True
+                        break
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+            已收藏 = False
     
+    if 已收藏:
+        添加收藏按钮=toga.Button(
+            text="取消收藏",
+            style=Pack(flex=1),
+            on_press=lambda widget:asyncio.create_task(切换收藏状态(song,self,添加收藏按钮))
+        )
+    else:
+        添加收藏按钮=toga.Button(
+            text="添加收藏",
+            style=Pack(flex=1),
+            on_press=lambda widget:asyncio.create_task(切换收藏状态(song,self,添加收藏按钮))
+        )
+            
+    曲目详情容器.add(添加收藏按钮)
+
     #曲目详细信息表格
     async def 加载曲目详细信息():
         try:
@@ -87,7 +129,7 @@ async def 曲目详情(返回按钮回调,song,缓存路径):
                 headings=['难度','total','tap','hold','slide','air','flick','谱师'],
                 data=曲目各难度数据
             )
-            曲目详情容器.add(曲目信息表格)
+            曲目信息表格容器.add(曲目信息表格)
         except Exception as e:
             print(f"获取歌曲详细信息失败: {e}")
             错误提示 = toga.Label(text=f"获取歌曲详细信息失败: {str(e)}", style=Pack(padding=10))

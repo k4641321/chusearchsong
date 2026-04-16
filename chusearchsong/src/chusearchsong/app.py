@@ -11,11 +11,25 @@ from toga import Key
 from chusearchsong.request import 获取曲绘
 import asyncio
 from loguru import logger
+import os
 
 class chusearchsong(toga.App):
 
     def startup(self):
         main_box = toga.Box(style=Pack(direction=COLUMN,flex=1))
+        #创建配置文件
+        try:
+            self.配置文件路径=self.paths.data / "config.json"
+            if not self.配置文件路径.is_file():
+                with open(self.配置文件路径,"w",encoding="utf-8") as f:
+                    favorites=json.dumps({
+                        "favorites_path":"",
+                    })
+                    f.write(favorites)
+            elif self.配置文件路径.is_file():
+                logger.info("配置文件存在")
+        except Exception as e:
+                logger.error(f"配置文件创建失败:{e}")
 
         #命令绑定
 
@@ -27,7 +41,7 @@ class chusearchsong(toga.App):
         self.结果容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
         main_box.add(搜索容器)
         # 筛选
-        筛选容器 = toga.Box(style=Pack(direction=ROW, flex=1, height=75))
+        筛选容器 = toga.Box(style=Pack(direction=ROW, flex=1, height=30))
         # ... existing code ...
         self.分类筛选 = toga.Selection(items=[
             {"name": "分类", "id": None},
@@ -109,11 +123,21 @@ class chusearchsong(toga.App):
             {"name": "15+","level_value":15.9},
 
         ], accessor="name", style=Pack(flex=1))
+        self.收藏=toga.Selection(items=[
+            {"name":"不展示收藏","value":False},
+            {"name":"展示收藏","value":True}
+        ],accessor="name", style=Pack(flex=1))
+        
         筛选容器.add(self.分类筛选)
         筛选容器.add(self.版本筛选)
-        筛选容器.add(self.难度筛选前)
-        筛选容器.add(self.难度筛选后)
+        筛选容器.add(self.收藏)
+        筛选容器2=toga.Box(style=Pack(direction=ROW,flex=1,height=30))
+        筛选容器2.add(self.难度筛选前)
+        筛选容器2.add(self.难度筛选后)
+        
         main_box.add(筛选容器)
+        main_box.add(筛选容器2)
+
         # 结果部分
         self.滑动条 = toga.ScrollContainer(content=self.结果容器, style=Pack(direction=COLUMN,flex=1))
         # main_box.add(滑动条)
@@ -146,7 +170,7 @@ class chusearchsong(toga.App):
         # self.commands.add(返回命令)
         # 创建新的详情页面
         from chusearchsong.songinfo import 曲目详情
-        newbox = await 曲目详情(返回按钮回调,song,self.paths.cache)
+        newbox = await 曲目详情(返回按钮回调,song,self.paths.cache,self)
         # tipdialog=toga.InfoDialog("提示", f"{self.paths.cache}")
         # await self.main_window.dialog(tipdialog)
         self.main_window.content = newbox
@@ -155,7 +179,7 @@ class chusearchsong(toga.App):
     def 点击搜索(self, widget=None):
         asyncio.create_task(self.执行搜索())
     async def 执行搜索(self):
-        if self.搜索框.value == "" and self.分类筛选.value.id == None and self.版本筛选.value.version == None:
+        if self.搜索框.value == "" and self.分类筛选.value.id == None and self.版本筛选.value.version == None and self.收藏.value.value == False:
             # print("空")
             return
         main_box = self.main_window.content
@@ -163,7 +187,17 @@ class chusearchsong(toga.App):
             main_box.remove(self.滑动条)
         self.结果容器.clear()
         from chusearchsong.search import 曲目搜索
-        曲目数据路径= self.paths.app / 'resources' / 'list.json'
+        if self.收藏.value.value==False:
+            曲目数据路径= self.paths.app / 'resources' / 'list.json'
+        elif self.收藏.value.value==True:
+            with open(self.配置文件路径, "r", encoding="utf-8") as f:
+                收藏目录路径=json.load(f)["favorites_path"]
+            if 收藏目录路径=="":
+                错误=toga.ErrorDialog(title="错误", message="没有收藏曲目，请先添加")
+                await self.main_window.dialog(错误)
+                return
+            else:
+                曲目数据路径=收藏目录路径
         曲目盒子=await 曲目搜索(曲目数据路径,self.分类筛选.value.name,self.版本筛选.value.version,self.版本筛选.value.name,self.难度筛选前.value.level_value,self.难度筛选后.value.level_value,self.搜索框.value,self.曲目详情)
         main_box.add(self.滑动条)
         # main_box.add(self.结果容器)
