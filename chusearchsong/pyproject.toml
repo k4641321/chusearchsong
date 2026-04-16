@@ -2,7 +2,7 @@
 [tool.briefcase]
 project_name = "chusearchsong"
 bundle = "com.k4641321"
-version = "0.5.0"
+version = "0.6.0"
 url = "https://github.com/k4641321/chusearchsong"
 license.file = "LICENSE"
 author = "k4641321"
@@ -13,6 +13,7 @@ formal_name = "chusearchsong"
 description = "中二查歌软件"
 long_description = """答辩框架，性能低下，能跑就行
 """
+icon = "icon/chusearchsong"
 sources = [
     "src/chusearchsong",
     "src/chusearchsong/resources",
