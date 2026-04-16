@@ -47,7 +47,7 @@ async def 曲目详情(返回按钮回调,song,缓存路径,self):
         #图片容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
         try:
             图片路径 = await 获取曲绘(song['id'],缓存路径)
-            图片= toga.Image(data=图片路径)
+            图片= toga.Image(src=图片路径)
             图片容器=toga.ImageView(图片)
             曲绘容器.add(图片容器)
         except Exception as e:

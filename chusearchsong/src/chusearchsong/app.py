@@ -177,7 +177,12 @@ class chusearchsong(toga.App):
         # print("点击详情")
 
     def 点击搜索(self, widget=None):
-        asyncio.create_task(self.执行搜索())
+        try:
+            asyncio.create_task(self.执行搜索())
+        except Exception as e:
+            错误=toga.ErrorDialog("错误", f"错误: {e}")
+            self.main_window.dialog(错误)
+            logger.error(f"错误: {e}")
     async def 执行搜索(self):
         if self.搜索框.value == "" and self.分类筛选.value.id == None and self.版本筛选.value.version == None and self.收藏.value.value == False:
             # print("空")
