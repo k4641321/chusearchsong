@@ -149,33 +149,38 @@ class chusearchsong(toga.App):
 
 
     async def 曲目详情(self,widget,song):
-        # 先保存当前页面到栈中（在检查之前）
-        #logger.info(self.commands.items)
-        self.页面暂存.append(self.main_window.content)
-
-        # self.main_window = toga.MainWindow(title="曲目详情")
-        # print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
-        
-        # 定义返回按钮的回调函数
-        
-        def 返回按钮回调(widget=None):
-            if self.页面暂存:
-                previous_content = self.页面暂存.pop()
-                self.main_window.content = previous_content
-                # print(f"返回成功，剩余页面数: {len(self.页面暂存)}")
-            # else:
-                # print("已回到主页面")
-
-        # 返回命令=toga.Command(返回按钮回调,text='返回',shortcut=Key.F)
-        # self.commands.add(返回命令)
-        # 创建新的详情页面
-        from chusearchsong.songinfo import 曲目详情
-        newbox = await 曲目详情(返回按钮回调,song,self.paths.cache,self)
-        # tipdialog=toga.InfoDialog("提示", f"{self.paths.cache}")
-        # await self.main_window.dialog(tipdialog)
-        self.main_window.content = newbox
-        # print("点击详情")
-
+        try:
+            # 先保存当前页面到栈中（在检查之前）
+            #logger.info(self.commands.items)
+            self.页面暂存.append(self.main_window.content)
+    
+            # self.main_window = toga.MainWindow(title="曲目详情")
+            # print(f"进入详情页，页面栈深度: {len(self.页面暂存)}")
+            
+            # 定义返回按钮的回调函数
+            
+            def 返回按钮回调(widget=None):
+                if self.页面暂存:
+                    previous_content = self.页面暂存.pop()
+                    self.main_window.content = previous_content
+                    # print(f"返回成功，剩余页面数: {len(self.页面暂存)}")
+                # else:
+                    # print("已回到主页面")
+    
+            # 返回命令=toga.Command(返回按钮回调,text='返回',shortcut=Key.F)
+            # self.commands.add(返回命令)
+            # 创建新的详情页面
+            from chusearchsong.songinfo import 曲目详情
+            newbox = await 曲目详情(返回按钮回调,song,self.paths.cache,self)
+            # tipdialog=toga.InfoDialog("提示", f"{self.paths.cache}")
+            # await self.main_window.dialog(tipdialog)
+            self.main_window.content = newbox
+            # print("点击详情")
+        except Exception as e:
+            logger.exception("详情页崩溃")
+            error_dlg = toga.ErrorDialog("详情页错误", str(e))
+            await self.main_window.dialog(error_dlg)
+            
     def 点击搜索(self, widget=None):
         try:
             asyncio.create_task(self.执行搜索())
