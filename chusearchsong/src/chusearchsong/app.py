@@ -150,7 +150,7 @@ class chusearchsong(toga.App):
 
     async def 曲目详情(self,widget,song):
         # 先保存当前页面到栈中（在检查之前）
-        logger.info(self.commands.items)
+        #logger.info(self.commands.items)
         self.页面暂存.append(self.main_window.content)
 
         # self.main_window = toga.MainWindow(title="曲目详情")
