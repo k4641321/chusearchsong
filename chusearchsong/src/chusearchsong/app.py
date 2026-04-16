@@ -19,17 +19,18 @@ class chusearchsong(toga.App):
         main_box = toga.Box(style=Pack(direction=COLUMN,flex=1))
         #创建配置文件
         try:
-            self.配置文件路径=self.paths.data / "config.json"
+            self.配置文件路径 = self.paths.data / "config.json"
+    # 确保 data 目录存在（关键修复）
+            self.paths.data.mkdir(parents=True, exist_ok=True)
+    
             if not self.配置文件路径.is_file():
-                with open(self.配置文件路径,"w",encoding="utf-8") as f:
-                    favorites=json.dumps({
-                        "favorites_path":"",
-                    })
-                    f.write(favorites)
-            elif self.配置文件路径.is_file():
+            with open(self.配置文件路径, "w", encoding="utf-8") as f:
+            favorites = json.dumps({"favorites_path": ""})
+            f.write(favorites)
+            else:
                 logger.info("配置文件存在")
         except Exception as e:
-                logger.error(f"配置文件创建失败:{e}")
+            logger.error(f"配置文件创建失败:{e}")
 
         #命令绑定
 
