@@ -5,29 +5,36 @@ import json
 from chusearchsong.request import 获取歌曲详细信息,获取曲绘,获取歌曲预览
 import asyncio
 from loguru import logger
+from toga.constants import Permission
+
 async def 曲目详情(返回按钮回调,song,缓存路径,self):
     rootbox = toga.Box(style=Pack(direction=COLUMN,flex=1))
-    
+
     _当前任务 = []
     newbox = toga.Box(style=Pack(direction=COLUMN, flex=1))
     滚动条=toga.ScrollContainer(content=newbox,style=Pack(direction=COLUMN,flex=1))
     rootbox.add(滚动条)
     # 标题栏容器
     标题栏容器 = toga.Box(style=Pack(direction=ROW))
-    返回按钮 = toga.Button(
-    text="返回",
-    style=Pack(flex=1),
-    on_press=lambda widget: 取消任务并返回(返回按钮回调, widget)
-)
 
     async def 取消任务并返回(回调函数, widget):
         # 取消所有后台任务
-        for 任务 in _当前任务:
-            if not 任务.done():
-                任务.cancel()
-        _当前任务.clear()
+        try:
+            for 任务 in _当前任务:
+                if not 任务.done():
+                    任务.cancel()
+            _当前任务.clear()
+        finally:
         # 执行返回操作
-        await 回调函数(widget)
+            回调函数(widget)
+
+    返回按钮 = toga.Button(
+    text="返回",
+    style=Pack(flex=1),
+    on_press=lambda widget: asyncio.create_task(取消任务并返回(返回按钮回调, widget))
+)
+
+
     标题栏容器.add(返回按钮)
     newbox.add(标题栏容器)
     
