@@ -17,19 +17,21 @@ class chusearchsong(toga.App):
 
     def startup(self):
         main_box = toga.Box(style=Pack(direction=COLUMN,flex=1))
+        self.main_window = toga.MainWindow(title=self.formal_name)
+        self.main_window.content = main_box
         #创建配置文件
         try:
             self.配置文件路径 = self.paths.data / "config.json"
-    # 确保 data 目录存在（关键修复）
             self.paths.data.mkdir(parents=True, exist_ok=True)
     
             if not self.配置文件路径.is_file():
-            with open(self.配置文件路径, "w", encoding="utf-8") as f:
-            favorites = json.dumps({"favorites_path": ""})
-            f.write(favorites)
+                with open(self.配置文件路径, "w", encoding="utf-8") as f:
+                    favorites = json.dumps({"favorites_path": ""})
+                    f.write(favorites)
             else:
                 logger.info("配置文件存在")
         except Exception as e:
+            self.main_window.diglog(toga.ErrorDialog("错误",e))
             logger.error(f"配置文件创建失败:{e}")
 
         #命令绑定
@@ -144,8 +146,7 @@ class chusearchsong(toga.App):
         # main_box.add(滑动条)
         #页面暂存
         self.页面暂存 = []
-        self.main_window = toga.MainWindow(title=self.formal_name)
-        self.main_window.content = main_box
+
         self.main_window.show()
 
 
@@ -186,8 +187,7 @@ class chusearchsong(toga.App):
         try:
             asyncio.create_task(self.执行搜索())
         except Exception as e:
-            错误=toga.ErrorDialog("错误", f"错误: {e}")
-            self.main_window.dialog(错误)
+            self.main_window.dialog(toga.ErrorDialog("错误", {e}))
             logger.error(f"错误: {e}")
     async def 执行搜索(self):
         if self.搜索框.value == "" and self.分类筛选.value.id == None and self.版本筛选.value.version == None and self.收藏.value.value == False:
@@ -209,7 +209,10 @@ class chusearchsong(toga.App):
                 return
             else:
                 曲目数据路径=收藏目录路径
-        曲目盒子=await 曲目搜索(曲目数据路径,self.分类筛选.value.name,self.版本筛选.value.version,self.版本筛选.value.name,self.难度筛选前.value.level_value,self.难度筛选后.value.level_value,self.搜索框.value,self.曲目详情)
+        try:
+            曲目盒子=await 曲目搜索(曲目数据路径,self.分类筛选.value.name,self.版本筛选.value.version,self.版本筛选.value.name,self.难度筛选前.value.level_value,self.难度筛选后.value.level_value,self.搜索框.value,self.曲目详情)
+        except Exception as e:
+            self.main_window.diglog(toga.ErrorDialog("错误",e))
         main_box.add(self.滑动条)
         # main_box.add(self.结果容器)
         # self.结果框.value=结果

@@ -3,8 +3,9 @@ import json
 from toga.style.pack import COLUMN, ROW,PACK,NONE,HIDDEN, VISIBLE
 from toga.style import Pack
 import asyncio
-#from chusearchsong.app import 曲目详情
 
+
+#多构建一个歌曲的json
 def 返回歌曲json(id,title,artist,genre,bpm,version,zhversion,difficulties):
     data = {
         "id": id,
@@ -19,19 +20,13 @@ def 返回歌曲json(id,title,artist,genre,bpm,version,zhversion,difficulties):
     }
     return data
 async def 曲目搜索(曲目列表路径:str,分类筛选:str,版本筛选:str,版本筛选中文名,难度筛选前:float or int ,难度筛选后:float or int ,搜索框:str,曲目详情):
-    #资源目录 = paths.app / "resources"
-    #曲目列表路径 = Path(资源目录),"resources\list.json"
     with open(曲目列表路径, "r", encoding="UTF-8") as f:
         曲目列表 = json.load(f)
         f.close()
     结果 = []
     if 分类筛选=="分类":
         分类筛选=None
-    #print(版本筛选,'error')
-    # if 版本筛选==None or 分类筛选==None or 曲目列表路径==None:
-    #     曲目盒子 = toga.Box(style=Pack(direction=COLUMN))
-    #     曲目盒子.add(toga.Label(text=f"错误", style=Pack(flex=1)))
-    #     return 曲目盒子
+
     for i in 曲目列表["songs"]:
         if 搜索框.lower() in i["title"].lower():
             if 分类筛选 == None and i["version"] == 版本筛选:

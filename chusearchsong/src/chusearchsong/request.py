@@ -39,7 +39,7 @@ async def 获取曲绘(songid, 缓存路径):
                     logger.info(f"HTTP错误: {response.status}")
                     return None
     except Exception as e:
-        logger.info(f"获取曲绘失败: {type(e).__name__}: {e}")
+        logger.error(f"获取曲绘失败: {type(e).__name__}: {e}")
         return None
 
 # if __name__ == "__main__":
