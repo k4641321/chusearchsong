@@ -7,17 +7,27 @@ import asyncio
 from loguru import logger
 async def 曲目详情(返回按钮回调,song,缓存路径,self):
     rootbox = toga.Box(style=Pack(direction=COLUMN,flex=1))
-
+    
+    _当前任务 = []
     newbox = toga.Box(style=Pack(direction=COLUMN, flex=1))
     滚动条=toga.ScrollContainer(content=newbox,style=Pack(direction=COLUMN,flex=1))
     rootbox.add(滚动条)
     # 标题栏容器
     标题栏容器 = toga.Box(style=Pack(direction=ROW))
     返回按钮 = toga.Button(
-        text="返回",
-        style=Pack(flex=1),
-        on_press=返回按钮回调
-    )
+    text="返回",
+    style=Pack(flex=1),
+    on_press=lambda widget: 取消任务并返回(返回按钮回调, widget)
+)
+
+    async def 取消任务并返回(回调函数, widget):
+        # 取消所有后台任务
+        for 任务 in _当前任务:
+            if not 任务.done():
+                任务.cancel()
+        _当前任务.clear()
+        # 执行返回操作
+        await 回调函数(widget)
     标题栏容器.add(返回按钮)
     newbox.add(标题栏容器)
     
@@ -44,15 +54,15 @@ async def 曲目详情(返回按钮回调,song,缓存路径,self):
             收藏按钮.on_press = lambda widget: asyncio.create_task(切换收藏状态(song, self, 收藏按钮))
     
     async def 加载曲绘():
-        #图片容器 = toga.Box(style=Pack(direction=COLUMN, flex=1))
         try:
-            图片路径 = await 获取曲绘(song['id'],缓存路径)
-            图片= toga.Image(src=图片路径)
+            图片数据 = await 获取曲绘(song['id'],缓存路径)
+            图片= toga.Image(src=图片数据)
             图片容器=toga.ImageView(图片)
             曲绘容器.add(图片容器)
         except Exception as e:
-            print(f"加载图片失败: {e}")
+            logger.error(f"加载图片失败: {e}")
             曲绘容器.add(toga.Label(text=f"加载图片失败：{e}"))
+            曲绘容器.add(toga.Label(text=f"返回的数据{图片数据}"))
             #曲目详情容器.add(图片容器)
 
     # 上半部分
@@ -144,8 +154,9 @@ async def 曲目详情(返回按钮回调,song,缓存路径,self):
     #         logger.error(f"获取歌曲预览失败: {e}")
     #         错误提示 = toga.Label(text=f"获取歌曲预览失败: {str(e)}")
     #         歌曲预览容器.add(错误提示)
-    asyncio.create_task(加载曲绘())
-    asyncio.create_task(加载曲目详细信息())
+    任务1 = asyncio.create_task(加载曲绘())
+    任务2 = asyncio.create_task(加载曲目详细信息())
+    _当前任务.extend([任务1, 任务2])
     # asyncio.create_task(加载歌曲预览())
     
     # 切换窗口内容
