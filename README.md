@@ -1,4 +1,4 @@
-# 此项目停止更新，等待作者用Kivy重构
+# 此项目停止更新，请转用新项目[chusearchsong_flutter](https://github.com/k4641321/chusearchsong_flutter)
 
 # 中二查歌
 
